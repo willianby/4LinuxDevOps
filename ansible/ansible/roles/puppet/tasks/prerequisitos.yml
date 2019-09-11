@@ -1,0 +1,24 @@
+- name: baixando rpm puppet para centos
+  yum:
+    name: "{{ item }}"
+    state: present
+  when: ansible_distribution == "CentOS"
+  loop:
+    - epel-release
+    - https://yum.puppet.com/puppet6-release-el-7.noarch.rpm
+
+- name: baixando rpm puppet para ubuntu
+  apt:
+    deb: https://apt.puppet.com/puppet6-release-bionic.deb
+    state: present
+  when: ansible_distribution == "Ubuntu"
+  
+
+
+
+
+
+
+
+
+

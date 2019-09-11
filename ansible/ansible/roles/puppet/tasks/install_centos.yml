@@ -1,0 +1,16 @@
+- name: Instalando puppet-agent centos
+  yum:
+    name: puppet-agent
+    state: present
+  when: ansible_distribution == "CentOS"
+
+
+
+
+
+
+
+
+
+
+

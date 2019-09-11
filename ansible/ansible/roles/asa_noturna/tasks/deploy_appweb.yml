@@ -1,0 +1,29 @@
+- name: Aplicacao no Apache
+  template:
+    src: index.html
+    dest: /var/www/html/index.html
+
+- name: Baixando Imagem
+  get_url:
+    url: https://i.imgur.com/1At3mtZ.gif
+    dest: /var/www/html/imagem.gif
+
+- name: restarting apache / HTTPD
+  systemd:
+    name: "{{ item.programa }}" 
+    state: restarted
+  when: ansible_os_family == item.familia  
+  loop:
+  - { programa: "apache2", familia: "Debian" }
+  - { programa: "httpd", familia: "RedHat" }
+
+
+
+
+
+
+
+
+
+
+

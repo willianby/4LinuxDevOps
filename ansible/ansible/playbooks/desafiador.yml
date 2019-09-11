@@ -1,0 +1,84 @@
+---
+- name: Playbook do desafiador
+  hosts: "{{ maquinas }}"
+  tasks:
+    - name: Removendo NGINX - UBUNTU
+      apt:
+        name: ['nginx']
+        state: absent
+        update_cache: yes
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Removendo NGINX - CentOS
+      yum:
+        name: ['nginx']
+        state: absent
+      when: ansible_distribution == "CentOS"
+
+    - name: Parando NGinX
+      systemd:
+        name: nginx
+        state: stopped
+      ignore_errors: yes
+
+    - name: Instalando pacotes Ubuntu
+      apt: 
+        name: ['apache2','libapache2-mod-php7.2','php7.2']
+        state: present
+        update_cache: yes
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Instalando pacotes CentOS
+      yum:
+        name: "{{ item }}"
+        state: present
+      notify: httpd
+      when: ansible_distribution == "CentOS"
+      loop:
+        - epel-release
+        - ['httpd','php']
+
+    - name: Habilitando modulo php7.2 Ubuntu
+      command: a2enmod php7.2
+      when: ansible_distribution == "Ubuntu"
+
+    - name: Reiniciando Httpd
+      systemd:
+        name: httpd
+        state: restarted
+      when: ansible_distribution == "CentOS"
+    
+    - name: Reiniciando Apache
+      systemd:
+        name: apache2
+        state: restarted
+      when: ansible_distribution == "Ubuntu"        
+
+    - name: Copiando arquivo index.php
+      copy:
+        src: /root/index.php
+        dest: /var/www/html/
+
+    - name: Editando index.php 
+      lineinfile:
+        path: /var/www/html/index.php
+        line: '<?php echo "Desafio Completo" ?>'
+        state: present 
+
+  handlers:
+  - name: httpd
+    systemd:
+      name: httpd
+      state: restarted    
+
+
+
+
+
+
+
+
+
+
+
+
